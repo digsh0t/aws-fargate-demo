@@ -5,8 +5,7 @@ import os
 
 load_dotenv()
 
-JOB_STATUS_IN_QUEUE = "IN QUEUE"
-BUCKET_NAME = os.getenv("BUCKET_NAME")
+SERVER_NAME = os.getenv("SERVER_NAME")
 
 
 app = FastAPI()
@@ -14,4 +13,4 @@ app = FastAPI()
 
 @app.get("/")
 async def check():
-    return {"status": "It's on!"}
+    return {"message": "Welcome to {}! Enjoy your stay.".format(SERVER_NAME)}
