@@ -4,7 +4,9 @@ on:
   push:
     branches: [feature/login-aws-with-assumerole]
 
-    
+permissions:
+  id-token: write
+  contents: read
 
 jobs:
   build:
@@ -14,6 +16,11 @@ jobs:
     steps:
       - name: Checkout code
         uses: action/checkout@v3
+        with:
+          repository: digsh0t/aws-fargate-demo
+          token: ${{ secrets.PAT_KEY }}
+          ref: main
+     
 
       - name: configureawscredentials
         uses: aws-actions/configure-aws-credentials@v2
