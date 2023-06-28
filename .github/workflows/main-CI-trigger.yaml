@@ -13,11 +13,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: action/checkout@v2
-        with:
-          repository: digsh0t/aws-fargate-demo
-          token: ${{ secrets.PAT_KEY }}
-          ref: feature/login-aws-with-assumerole
+        uses: action/checkout@v3
 
       - name: configureawscredentials
         uses: aws-actions/configure-aws-credentials@v2
