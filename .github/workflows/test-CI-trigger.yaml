@@ -14,6 +14,14 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+
+      - name: test
+        env:
+          GITHUB_WORKSPACE: ${{ github.repository }}
+        run: |
+          echo GITHUB_WORKSPACE
+          printenv
+
       - name: Checkout code
         uses: action/checkout@v3
      
