@@ -22,7 +22,7 @@ jobs:
       - name: Checkout code
         uses: action/checkout@v3
         with:
-          repository: digsh0t/aws-fargate-demo
+          repository: microsoft/vscode
      
 
       - name: configureawscredentials
