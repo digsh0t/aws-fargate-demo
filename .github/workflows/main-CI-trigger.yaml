@@ -4,6 +4,10 @@ on:
   push:
     branches: [feature/login-aws-with-assumerole]
 
+permissions:
+  id-token: write
+  contents: read
+
 jobs:
   build:
     name: Build Image
@@ -12,10 +16,6 @@ jobs:
     steps:
       - name: Checkout code
         uses: action/checkout@v2
-        with:
-          repository: digsh0t/aws-fargate-demo
-          token: ${{ secrets.GITHUB_TOKEN }}
-          ref: feature/login-aws-with-assumerole
 
       - name: configureawscredentials
         uses: aws-actions/configure-aws-credentials@v2
