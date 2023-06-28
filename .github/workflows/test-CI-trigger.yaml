@@ -22,12 +22,12 @@ jobs:
           echo GITHUB_WORKSPACE
           printenv
 
-      # - name: Checkout code
-      #   uses: action/checkout@v3
+      - name: Checkout code
+        uses: action/checkout@v3
      
 
       - name: configureawscredentials
-        uses: aws-actions/configure-aws-credentials@v2
+        uses: aws-actions/configure-aws-credentials@v3
         env:
           AWS_DEFAULT_REGION: us-east-2
         with:
