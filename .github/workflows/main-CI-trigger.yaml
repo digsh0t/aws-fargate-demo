@@ -1,0 +1,47 @@
+name: Build image and deploy to ECR
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build:
+    name: Build Image
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: test
+        env:
+          GITHUB_WORKSPACE: ${{ github.repository }}
+        run: |
+          echo GITHUB_WORKSPACE
+          printenv
+
+      - name: Checkout code
+        uses: action/checkout@v3
+
+      - name: configureawscredentials
+        uses: aws-actions/configure-aws-credentials@v2
+        env:
+          AWS_DEFAULT_REGION: us-east-2
+        with:
+          role-to-assume: arn:aws:iam::859703558734:role/github-action-role
+          role-session-name: samplerolesession
+          aws-region: ${{env.AWS_DEFAULT_REGION}}
+
+      - name: Some AWS commands
+        run: |
+          aws configure list
+
+      # - name: Login to Amazon ECR
+      #   id: login-ecr
+      #   uses: aws-actions/amazon-ecr-login@v1
+
+      # - name: Build, tag, and push image to Amazon ECR
+      #   env:
+      #     ECR_REGISTRY:
+      #     ECR_REPOSITORY: sample-fastapi
+      #     IMAGE_TAG: latest
+      #   run: |
+      #     docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+      #     docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
