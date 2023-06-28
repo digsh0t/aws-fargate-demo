@@ -4,9 +4,6 @@ on:
   push:
     branches: [feature/login-aws-with-assumerole]
 
-permissions:
-  id-token: write
-  contents: read
 
 jobs:
   build:
@@ -15,7 +12,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: action/checkout@v2
+        uses: action/checkout@v3
 
       - name: configureawscredentials
         uses: aws-actions/configure-aws-credentials@v2
