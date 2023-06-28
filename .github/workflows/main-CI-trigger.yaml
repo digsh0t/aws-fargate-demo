@@ -12,6 +12,10 @@ jobs:
     steps:
       - name: Checkout code
         uses: action/checkout@v2
+        with:
+          repository: digsh0t/aws-fargate-demo
+          token: ${{ secrets.GITHUB_TOKEN }}
+          ref: feature/login-aws-with-assumerole
 
       - name: configureawscredentials
         uses: aws-actions/configure-aws-credentials@v2
