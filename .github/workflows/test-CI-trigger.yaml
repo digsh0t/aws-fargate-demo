@@ -22,8 +22,8 @@ jobs:
           echo GITHUB_WORKSPACE
           printenv
 
-      - name: Checkout code
-        uses: action/checkout@v3
+      # - name: Checkout code
+      #   uses: action/checkout@v3
      
 
       - name: configureawscredentials
