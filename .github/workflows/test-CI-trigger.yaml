@@ -4,9 +4,6 @@ on:
   push:
     branches: [feature/login-aws-with-assumerole]
 
-permissions:
-  id-token: write
-  contents: read
 
 jobs:
   build:
@@ -24,10 +21,12 @@ jobs:
 
       - name: Checkout code
         uses: action/checkout@v3
+        with:
+          repository: GoesToEleven/GolangTraining
      
 
       - name: configureawscredentials
-        uses: aws-actions/configure-aws-credentials@v3
+        uses: aws-actions/configure-aws-credentials@v2
         env:
           AWS_DEFAULT_REGION: us-east-2
         with:
