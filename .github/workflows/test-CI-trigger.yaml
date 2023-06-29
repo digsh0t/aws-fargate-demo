@@ -34,7 +34,7 @@ jobs:
 
       - name: Build, tag, and push image to Amazon ECR
         env:
-          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REGISTRY: public.ecr.aws/a3b1j4l7
           ECR_REPOSITORY: aws-fargate-demo-registry
         run: |
           echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY" 
