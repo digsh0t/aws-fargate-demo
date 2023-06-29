@@ -22,7 +22,7 @@ jobs:
       - name: configureawscredentials
         uses: aws-actions/configure-aws-credentials@v2
         env:
-          AWS_DEFAULT_REGION: us-east-2
+          AWS_DEFAULT_REGION: us-east-1
         with:
           role-to-assume: arn:aws:iam::859703558734:role/github-action-role
           role-session-name: samplerolesession
