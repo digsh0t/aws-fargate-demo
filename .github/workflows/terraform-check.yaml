@@ -13,7 +13,7 @@ permissions:
 
 jobs:
   terraform:
-    name: Build Image
+    name: Run Terraform Check and output status
     runs-on: ubuntu-latest
     defaults:
       run:
