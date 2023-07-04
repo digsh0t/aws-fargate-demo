@@ -30,7 +30,5 @@ jobs:
 
       - name: Run AWS test commands
         run: |
-          aws configure list 
-          cat ~/.aws/config
-          cat ~/.aws/credentials
+          aws configure list --profile default
 
