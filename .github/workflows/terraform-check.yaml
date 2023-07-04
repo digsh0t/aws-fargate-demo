@@ -1,0 +1,99 @@
+name: Terraform Check
+
+on:
+  pull_request:
+    branches:
+    - main
+    paths:
+    - terraform/**
+
+permissions:
+  id-token: write
+  contents: read
+  pull-requests: 'write'
+
+
+jobs:
+  terraform:
+    name: Run Terraform Check and output status
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+        working-directory: ./terraform
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.PAT_KEY }}
+
+      - name: configureawscredentials
+        uses: aws-actions/configure-aws-credentials@v2
+        env:
+          AWS_DEFAULT_PROFILE: user1
+          AWS_DEFAULT_REGION: us-east-2
+        with:
+          role-to-assume: arn:aws:iam::859703558734:role/github-action-role
+          role-session-name: samplerolesession
+          aws-region: ${{env.AWS_DEFAULT_REGION}}
+
+      - name: Setup Profile
+        env:
+          REGION: us-east-2
+          PROFILE_NAME: user1
+        run: |
+          aws configure set region ${{ env.REGION }} --profile ${{ env.PROFILE_NAME }}
+          aws configure set aws_access_key_id ${{ env.AWS_ACCESS_KEY_ID }} --profile ${{ env.PROFILE_NAME }}
+          aws configure set aws_secret_access_key ${{ env.AWS_SECRET_ACCESS_KEY }} --profile ${{ env.PROFILE_NAME }}
+          aws configure set aws_session_token ${{ env.AWS_SESSION_TOKEN }} --profile ${{ env.PROFILE_NAME }}
+
+      - name: Terraform init
+        id: init
+        run: terraform init -backend-config=backend.hcl
+
+      - name: Terraform format
+        id: fmt
+        run: terraform fmt -check
+
+      - name: Terraform Validate
+        id: validate
+        run: terraform validate
+
+      - name: Terraform plan
+        id: plan
+        if: github.event_name == 'pull_request'
+        run: terraform plan -no-color -input=false
+        continue-on-error: true
+
+      - uses: actions/github-script@v6
+        if: github.event_name == 'pull_request'
+        env:
+          PLAN: "terraform\n${{ steps.plan.outputs.stdout }}"
+        with:
+          script: |
+            const output = `#### Terraform Format and Style 🖌\`${{ steps.fmt.outcome }}\`
+            #### Terraform Initialization ⚙️\`${{ steps.init.outcome }}\`
+            #### Terraform Validation 🤖\`${{ steps.validate.outcome }}\`
+            #### Terraform Plan 📖\`${{ steps.plan.outcome }}\`
+
+            <details><summary>Show Plan</summary>
+
+            \`\`\`\n
+            ${process.env.PLAN}
+            \`\`\`
+
+            </details>
+            *Pushed by: @${{ github.actor }}, Action: \`${{ github.event_name }}\`*`;
+
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: output
+            })
+  
+      - name: Terraform Plan Status
+        if: steps.plan.outcome == 'failure'
+        run: exit 1
+
