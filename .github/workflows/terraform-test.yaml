@@ -1,0 +1,36 @@
+name: Build image and deploy to ECR
+
+on:
+  push:
+    branches: [feat/use-terraform]
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  build:
+    name: Build Image
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.PAT_KEY }}
+
+      - name: configureawscredentials
+        uses: aws-actions/configure-aws-credentials@v2
+        env:
+          AWS_DEFAULT_REGION: us-east-2
+        with:
+          role-to-assume: arn:aws:iam::859703558734:role/github-action-role
+          role-session-name: samplerolesession
+          aws-region: ${{env.AWS_DEFAULT_REGION}}
+
+      - name: Run AWS test commands
+        run: |
+          aws configure list 
+          cat ~/.aws/config
+          cat ~/.aws/credentials
+
