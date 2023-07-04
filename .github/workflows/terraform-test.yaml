@@ -39,8 +39,15 @@ jobs:
           aws configure set aws_secret_access_key ${{ env.AWS_SECRET_ACCESS_KEY }} --profile ${{ env.PROFILE_NAME }}
           aws configure set aws_session_token ${{ env.AWS_SESSION_TOKEN }} --profile ${{ env.PROFILE_NAME }}
 
+      - name: Terraform init
+        working-directory: ./terraform
+        run: terraform init -backend-config=backend.hcl
 
-      - name: Run AWS test commands
-        run: |
-          aws configure list --profile user1
+      - name: Terraform Validate
+        working-directory: ./terraform
+        run: terraform validate
+
+      - name: Terraform plan
+        working-directory: ./terraform
+        run: terraform plan -no-color -input=false
 
