@@ -1,17 +1,24 @@
-name: Build image and deploy to ECR
+name: Terraform Check
 
 on:
-  push:
-    branches: [feat/use-terraform]
+  pull_request:
+    branches:
+    - main
+    paths:
+    - terraform/**
 
 permissions:
   id-token: write
   contents: read
 
 jobs:
-  build:
+  terraform:
     name: Build Image
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+        working-directory: ./terraform
 
     steps:
       - name: Checkout code
@@ -40,14 +47,46 @@ jobs:
           aws configure set aws_session_token ${{ env.AWS_SESSION_TOKEN }} --profile ${{ env.PROFILE_NAME }}
 
       - name: Terraform init
-        working-directory: ./terraform
+        id: init
         run: terraform init -backend-config=backend.hcl
 
       - name: Terraform Validate
-        working-directory: ./terraform
+        id: validate
         run: terraform validate
 
       - name: Terraform plan
-        working-directory: ./terraform
+        id: plan
+        if: github.event_name == 'pull_request'
         run: terraform plan -no-color -input=false
+        continue-on-error: true
+
+      - uses: actions/github-script@v6
+        if: github.event_name == 'pull_request'
+        env:
+          PLAN: "terraform\n${{ steps.plan.outputs.stdout }}"
+        with:
+          script: |
+            #### Terraform Initialization ⚙️\`${{ steps.init.outcome }}\`
+            #### Terraform Validation 🤖\`${{ steps.validate.outcome }}\`
+            #### Terraform Plan 📖\`${{ steps.plan.outcome }}\`
+
+            <details><summary>Show Plan</summary>
+
+            \`\`\`\n
+            ${process.env.PLAN}
+            \`\`\`
+
+            </details>
+            *Pushed by: @${{ github.actor }}, Action: \`${{ github.event_name }}\`*`;
+
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: output
+            })
+  
+      - name: Terraform Plan Status
+        if: steps.plan.outcome == 'failure'
+        run: exit 1
 
