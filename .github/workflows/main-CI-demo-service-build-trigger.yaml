@@ -30,6 +30,7 @@ jobs:
           aws-region: ${{ vars.AWS_DEFAULT_REGION }}
 
       - name: Build, tag, and push image to Amazon ECR
+        working-directory: ./src/demo-service
         env:
           REGISTRY: ${{ vars.REGISTRY_URL }}
           REGISTRY_ALIAS: ${{ vars.REGISTRY_ALIAS }}
