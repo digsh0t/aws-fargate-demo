@@ -21,6 +21,8 @@ jobs:
       run:
         shell: bash
         working-directory: ./terraform
+    env:
+      AWS_DEFAULT_PROFILE: user1
 
     steps:
       - name: Checkout code
@@ -30,23 +32,17 @@ jobs:
 
       - name: configureawscredentials
         uses: aws-actions/configure-aws-credentials@v2
-        env:
-          AWS_DEFAULT_PROFILE: user1
-          AWS_DEFAULT_REGION: us-east-2
         with:
-          role-to-assume: arn:aws:iam::859703558734:role/github-action-role
+          role-to-assume: ${{ vars.ASSUME_ROLE}}
           role-session-name: samplerolesession
-          aws-region: ${{env.AWS_DEFAULT_REGION}}
+          aws-region: ${{ vars.AWS_DEFAULT_REGION }}
 
       - name: Setup Profile
-        env:
-          REGION: us-east-2
-          PROFILE_NAME: user1
         run: |
-          aws configure set region ${{ env.REGION }} --profile ${{ env.PROFILE_NAME }}
-          aws configure set aws_access_key_id ${{ env.AWS_ACCESS_KEY_ID }} --profile ${{ env.PROFILE_NAME }}
-          aws configure set aws_secret_access_key ${{ env.AWS_SECRET_ACCESS_KEY }} --profile ${{ env.PROFILE_NAME }}
-          aws configure set aws_session_token ${{ env.AWS_SESSION_TOKEN }} --profile ${{ env.PROFILE_NAME }}
+          aws configure set region ${{ vars.AWS_DEFAULT_REGION }} --profile ${{ env.AWS_DEFAULT_PROFILE }}
+          aws configure set aws_access_key_id ${{ env.AWS_ACCESS_KEY_ID }} --profile ${{ env.AWS_DEFAULT_PROFILE }}
+          aws configure set aws_secret_access_key ${{ env.AWS_SECRET_ACCESS_KEY }} --profile ${{ env.AWS_DEFAULT_PROFILE }}
+          aws configure set aws_session_token ${{ env.AWS_SESSION_TOKEN }} --profile ${{ env.AWS_DEFAULT_PROFILE }}
 
       - name: Terraform init
         id: init
