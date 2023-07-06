@@ -13,7 +13,7 @@ app = FastAPI()
 
 @app.get("/")
 async def check():
-    return {"message": "Welcome to {}! Enjoy your stay!".format(SERVER_NAME)}
+    return {"message": "Welcome to {}! Enjoy your stay!!!".format(SERVER_NAME)}
 
 
 @app.get("/today-news")
