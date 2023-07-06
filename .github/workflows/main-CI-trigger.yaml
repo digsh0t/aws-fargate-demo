@@ -31,7 +31,8 @@ jobs:
           REGISTRY: ${{ vars.REGISTRY_URL }}
           REGISTRY_ALIAS: ${{ vars.REGISTRY_ALIAS }}
           REPOSITORY: ${{ vars.REGISTRY_REPOSITORY }}
-          REGION: ${{ vars.AWS_DEFAULT_REGION }}
+          ## Required because ecr-public is only available on this region
+          REGION: us-east-1
         run: |
           aws ecr-public get-login-password --region $REGION | docker login --username AWS --password-stdin $REGISTRY
           docker build -t $REGISTRY/$REGISTRY_ALIAS/$REPOSITORY .
