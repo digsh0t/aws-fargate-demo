@@ -2,7 +2,10 @@ name: Build image and deploy to ECR
 
 on:
   push:
-    branches: [main]
+    branches:
+    - main
+    paths:
+    - src/demo-service/**
 
 permissions:
   id-token: write
