@@ -10,3 +10,6 @@ database.ini
 
 ## Terraform
 .terraform
+
+## MacOS
+.DS_Store
