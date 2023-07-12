@@ -1,10 +1,17 @@
 resource "aws_vpc" "main" {
   cidr_block           = var.cidr
   enable_dns_hostnames = true
+
+  tags = {
+    Name = "demo-vpc"
+  }
 }
 
 resource "aws_internet_gateway" "main" {
   vpc_id = aws_vpc.main.id
+  tags = {
+    Name = "igw"
+  }
 }
 
 resource "aws_subnet" "private" {
@@ -36,22 +43,4 @@ resource "aws_route_table_association" "public" {
   count          = length(var.public_subnets)
   subnet_id      = element(aws_subnet.public.*.id, count.index)
   route_table_id = aws_route_table.public.id
-}
-
-resource "aws_route_table" "private" {
-  count  = length(var.private_subnets)
-  vpc_id = aws_vpc.main.id
-}
-
-resource "aws_route" "private" {
-  count                  = length(compact(var.private_subnets))
-  route_table_id         = element(aws_route_table.private.*.id, count.index)
-  destination_cidr_block = "0.0.0.0/0"
-  gateway_id             = ""
-}
-
-resource "aws_route_table_association" "private" {
-  count          = length(var.private_subnets)
-  subnet_id      = element(aws_subnet.private.*.id, count.index)
-  route_table_id = element(aws_route_table.private.*.id, count.index)
 }
