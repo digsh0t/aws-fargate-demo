@@ -13,3 +13,6 @@ database.ini
 
 ## MacOS
 .DS_Store
+
+## Artifacts
+terraform/artifacts/slack_lambda.zip
