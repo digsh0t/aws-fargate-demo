@@ -1,0 +1,11 @@
+{
+    "name": "${service_name}",
+    "image": "${image_path}",
+    "essential": true,
+    "environment": "${container_environment}",
+    "portMappings": [{
+      "protocol": "tcp",
+      "containerPort": "${container_port}",
+      "hostPort": "${container_port}"
+    }]
+}
