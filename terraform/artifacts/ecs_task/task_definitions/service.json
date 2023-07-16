@@ -1,5 +1,5 @@
 {
-    "name": "${service_name}",
+    "name": "${container_name}",
     "image": "${image_path}",
     "essential": true,
     "environment": "${container_environment}",

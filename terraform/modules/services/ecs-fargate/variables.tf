@@ -15,8 +15,20 @@ variable "container_environment" {
 
 variable "container_port" {
   description = "Port of the container"
+  type        = number
 }
 
 variable "vpc_id" {
   description = "The id of VPC used for ECS"
+  type        = string
+}
+
+variable "subnet_ids" {
+  description = "The subnet ids to be used for ECS"
+  type        = list(string)
+}
+
+variable "aws_alb_target_group_arn" {
+  description = "The subnets to be used for ECS"
+  type        = string
 }

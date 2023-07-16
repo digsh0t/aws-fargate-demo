@@ -4,26 +4,34 @@ resource "aws_ecs_cluster" "demo_ecs_cluster" {
 
 resource "aws_ecs_task_definition" "demo_ecs_task" {
   network_mode             = "awsvpc"
+  family                   = "demo_uvicorn_service"
   requires_compatibilities = ["FARGATE"]
   cpu                      = 256
   memory                   = 512
   execution_role_arn       = aws_iam_role.ecs_task_exe_role.arn
   task_role_arn            = aws_iam_role.ecs_task_role.arn
-  container_definitions = templatefile(
-    "${path.module}/artifacts/ecs_task/task_definitions/service.json",
-    {
-      container_name        = var.container_name
-      image_path            = var.image_path
-      container_environment = var.container_environment
-      container_port        = var.container_port
-  })
+  container_definitions = jsonencode(
+    [
+      {
+        name        = var.container_name
+        image       = var.image_path
+        essential   = true
+        environment = {}
+        # portMappings = [{
+        #   protocol      = "tcp"
+        #   containerPort = var.container_port
+        #   hostPort      = var.container_port
+        # }]
+      }
+    ]
+  )
 }
 
 resource "aws_security_group" "demo_ecs_task_sg" {
   name   = "ecs_task_sg"
   vpc_id = var.vpc_id
 
-  ingress = {
+  ingress {
     protocol         = "tcp"
     from_port        = var.container_port
     to_port          = var.container_port
@@ -52,7 +60,7 @@ resource "aws_ecs_service" "demo_ecs_service" {
 
   network_configuration {
     security_groups  = [aws_security_group.demo_ecs_task_sg.id]
-    subnets          = var.subnets.*.id
+    subnets          = var.subnet_ids
     assign_public_ip = false
   }
 
