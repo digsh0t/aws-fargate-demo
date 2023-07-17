@@ -2,6 +2,11 @@ resource "aws_ecs_cluster" "demo_ecs_cluster" {
   name = "demo-ecs-cluster"
 }
 
+resource "aws_cloudwatch_log_group" "demo_ecs_lg" {
+  name = "demo_uvicorn_service"
+}
+
+
 resource "aws_ecs_task_definition" "demo_ecs_task" {
   network_mode             = "awsvpc"
   family                   = "demo_uvicorn_service"
@@ -13,15 +18,29 @@ resource "aws_ecs_task_definition" "demo_ecs_task" {
   container_definitions = jsonencode(
     [
       {
-        name        = var.container_name
-        image       = var.image_path
-        essential   = true
-        environment = {}
-        # portMappings = [{
-        #   protocol      = "tcp"
-        #   containerPort = var.container_port
-        #   hostPort      = var.container_port
-        # }]
+        name      = var.container_name
+        image     = var.image_path
+        essential = true
+        environment = [
+          for env_name, env_value in var.container_environment : {
+            name  = env_name
+            value = env_value
+          }
+        ]
+        portMappings = [{
+          protocol      = "tcp"
+          containerPort = var.container_port
+          hostPort      = var.container_port
+        }]
+        logConfiguration = {
+          logDriver = "awslogs"
+          options = {
+            awslogs-group         = "/ecs/${aws_cloudwatch_log_group.demo_ecs_lg.name}"
+            awslogs-stream-prefix = "ecs"
+            awslogs-region        = var.region
+            awslogs-create-group  = true
+          }
+        }
       }
     ]
   )

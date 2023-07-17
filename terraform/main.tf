@@ -91,9 +91,10 @@ module "ecs" {
     DB_USERNAME = var.db_username
     DB_PASSWORD = var.db_password
   }
-  container_name = "demo uvicorn app"
+  container_name = "demo_uvicorn_app"
   container_port = 8080
   image_path     = "public.ecr.aws/a3b1j4l7/aws-fargate-demo-registry@sha256:c781859dd517e5623a9f7dbe0159a2890bdadb71f53d016679951d4bd8e98596"
   vpc_id         = module.vpc.vpc_id
   subnet_ids     = module.vpc.private_subnet_ids
+  region         = "us-east-2"
 }

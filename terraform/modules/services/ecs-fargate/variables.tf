@@ -32,3 +32,8 @@ variable "aws_alb_target_group_arn" {
   description = "The subnets to be used for ECS"
   type        = string
 }
+
+variable "region" {
+  description = "Region to used in Cloudwatch Log Groups"
+  type        = string
+}
