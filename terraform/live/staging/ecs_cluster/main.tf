@@ -11,7 +11,7 @@ provider "aws" {
 
 terraform {
   backend "s3" {
-    key = "aws-fargate-demo-bucket/terraform/main.tf"
+    key = "aws-fargate-demo-bucket/terraform/main.tfstate"
   }
 }
 

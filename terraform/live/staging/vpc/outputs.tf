@@ -8,11 +8,3 @@ output "private_subnet_ids" {
 output "public_subnet_ids" {
   value = module.vpc.public_subnet_ids
 }
-
-# output "db_instance_endpoint" {
-#   value = module.amazon-rds.db_instance_endpoint
-# }
-
-output "demo_fargate_elb_dns" {
-  value = module.elb.elb_domain
-}
