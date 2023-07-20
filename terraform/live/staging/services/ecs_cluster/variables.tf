@@ -13,13 +13,6 @@ variable "region" {
   default     = "us-east-2"
 }
 
-variable "aws-region" {
-  type        = string
-  description = "AWS region to launch servers."
-  default     = "us-east-2"
-}
-
-
 variable "slack_url" {
   description = "slack hook url, eg. https://hooks.slack.com/services/xxxxxxxxxxxxx"
   type        = string
@@ -65,4 +58,21 @@ variable "db_username" {
 variable "db_password" {
   description = "The password of DB"
   type        = string
+}
+
+variable "container_name" {
+  description = "Name of The Container in ECS task"
+  type        = string
+  default     = "demo_uvicorn"
+}
+
+variable "container_port" {
+  description = "Port number used in the Container in ECS task"
+  type        = number
+  default     = 8080
+}
+
+variable "image_path" {
+  description = "URL to image"
+  type        = sring
 }

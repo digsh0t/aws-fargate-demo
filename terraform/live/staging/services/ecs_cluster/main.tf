@@ -15,12 +15,24 @@ terraform {
   }
 }
 
-module "vpc" {
-  source             = "./modules/global/vpc"
-  cidr               = var.cidr
-  availability_zones = var.availability_zones
-  private_subnets    = var.private_subnets
-  public_subnets     = var.public_subnets
+data "terraform_remote_state" "demo_vpc" {
+  backend = "s3"
+
+  config = {
+    bucket = "aws-fargate-demo-bucket"
+    key    = "live/staging/global/vpc/main.tfstate"
+    region = "us-east-2"
+  }
+}
+
+data "terraform_remote_state" "demo_db" {
+  backend = "s3"
+
+  config = {
+    bucket = "aws-fargate-demo-bucket"
+    key    = "live/staging/services/amazon_rds/main.tfstate"
+    region = "us-east-2"
+  }
 }
 
 # module "amazon-rds" {
@@ -75,8 +87,8 @@ module "vpc" {
 module "elb" {
   source = "./modules/services/elb"
 
-  vpc_id     = module.vpc.vpc_id
-  subnet_ids = module.vpc.public_subnet_ids
+  vpc_id     = data.terraform_remote_state.demo_vpc.outputs.vpc_id
+  subnet_ids = data.terraform_remote_state.demo_vpc.outputs.public_subnet_ids
 }
 
 module "ecs" {
@@ -91,10 +103,10 @@ module "ecs" {
     DB_USERNAME = var.db_username
     DB_PASSWORD = var.db_password
   }
-  container_name = "demo_uvicorn_app"
-  container_port = 8080
-  image_path     = "public.ecr.aws/a3b1j4l7/aws-fargate-demo-registry@sha256:c781859dd517e5623a9f7dbe0159a2890bdadb71f53d016679951d4bd8e98596"
-  vpc_id         = module.vpc.vpc_id
-  subnet_ids     = module.vpc.public_subnet_ids
-  region         = "us-east-2"
+  container_name = var.container_name
+  container_port = var.container_port
+  image_path     = var.image_path
+  vpc_id         = data.terraform_remote_state.demo_vpc.outputs.vpc_id
+  subnet_ids     = data.terraform_remote_state.demo_vpc.outputs.public_subnet_ids
+  region         = var.region
 }

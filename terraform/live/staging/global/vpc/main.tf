@@ -11,12 +11,12 @@ provider "aws" {
 
 terraform {
   backend "s3" {
-    key = "live/staging/vpc/main.tfstate"
+    key = "live/staging/global/vpc/main.tfstate"
   }
 }
 
 module "vpc" {
-  source             = "../../../modules/global/vpc"
+  source             = "../../../../modules/global/vpc"
   cidr               = var.cidr
   availability_zones = var.availability_zones
   private_subnets    = var.private_subnets
