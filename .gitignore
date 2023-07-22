@@ -16,3 +16,7 @@ database.ini
 
 ## Artifacts
 terraform/artifacts/slack_lambda.zip
+
+## Frontend
+node_modules
+test
